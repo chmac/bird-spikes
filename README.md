@@ -6,6 +6,8 @@ OpenSCAD models for bird spikes.
 
 - `*.scad` (root) – one file per printable part; open these in OpenSCAD
 - `lib/` – reusable modules, pulled in with `use <lib/name.scad>`
+  - `spike.scad` – one spike (bottom/top diameter, height)
+  - `layout.scad` – where spikes go on a given plate shape
 - `stl/` – exported meshes for slicing (`make`)
 
 ## Usage
