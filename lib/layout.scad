@@ -1,10 +1,13 @@
 // Spike placement, kept separate from the plate shape and the spike itself.
-// Everything is centred on the origin. The plate is `width` along X and
-// `length` along Y. shape is "rect" or "ellipse" (an ellipse with
-// width == length is a circle).
+// Everything is centred on the origin, viewed from above with X to the right
+// and Y away from you. The plate is `width` along X and `length` along Y.
+// The front and back edges run along the width (at y = +-length/2); the left
+// and right edges run along the length (at x = +-width/2).
+// elliptical = true makes the plate an ellipse (a circle if width == length).
 //
 // radius = spike base radius
-// margin = gap between the plate edge and the edge of the outermost spike bases
+// margin_front_back / margin_left_right = gap between those plate edges and
+//   the edge of the outermost spike bases
 
 // Centres along one axis of a rectangle of size `extent`. The outer spikes sit
 // exactly `margin` from the ends; spacing is stretched slightly so the row
@@ -22,17 +25,21 @@ function axis_centres(extent, pitch, radius, margin) =
 function midpoints(xs) = [for (i = [0 : len(xs) - 2]) (xs[i] + xs[i + 1]) / 2];
 
 // Does a spike of the given radius centred at (x, y) fit on an elliptical
-// plate, keeping `margin` clear of the edge?
-function fits_ellipse(x, y, width, length, radius, margin) =
-    let(a = width / 2 - radius - margin, b = length / 2 - radius - margin)
+// plate, keeping the margins clear of the edge?
+function fits_ellipse(x, y, width, length, radius, margin_left_right, margin_front_back) =
+    let(
+        a = width / 2 - radius - margin_left_right,
+        b = length / 2 - radius - margin_front_back
+    )
     a > 0 && b > 0 && pow(x / a, 2) + pow(y / b, 2) <= 1 + 1e-9;
 
 // All [x, y] spike positions for the plate.
 // stagger = true offsets every other row by half a spacing (denser, hex-like).
-function spike_points(shape, width, length, pitch, radius, margin, stagger = false) =
-    shape == "rect"
-        ? let(xs = axis_centres(width, pitch, radius, margin),
-              ys = axis_centres(length, pitch, radius, margin))
+function spike_points(elliptical, width, length, pitch, radius,
+                      margin_front_back, margin_left_right, stagger = false) =
+    !elliptical
+        ? let(xs = axis_centres(width, pitch, radius, margin_left_right),
+              ys = axis_centres(length, pitch, radius, margin_front_back))
           [for (j = [0 : len(ys) - 1])
               for (x = stagger && j % 2 == 1 && len(xs) > 1 ? midpoints(xs) : xs)
                   [x, ys[j]]]
@@ -48,23 +55,20 @@ function spike_points(shape, width, length, pitch, radius, margin, stagger = fal
                   x = (i + ox + (stagger && j % 2 != 0 ? 0.5 : 0)) * pitch,
                   y = (j + oy) * pitch
               )
-              if (fits_ellipse(x, y, width, length, radius, margin)) [x, y]];
+              if (fits_ellipse(x, y, width, length, radius,
+                               margin_left_right, margin_front_back)) [x, y]];
 
 // Unit vector pointing outwards for a spike whose centre is within `band` mm
 // of the plate edge, or [0, 0] for spikes further in.
 // Ellipse: every edge spike leans out, perpendicular to the curve.
-// Rectangle: lean_edges picks which edges count:
-//   "all"    every edge
-//   "width"  the two edges that are `width` long (front and back, at y = +-length/2)
-//   "length" the two edges that are `length` long (left and right, at x = +-width/2)
-// A spike near a corner only leans away from the edges that count.
-function edge_dir(shape, x, y, width, length, band, lean_edges = "all") =
-    shape == "rect"
+// Rectangle: only edges whose lean flag is true count, and a spike near a
+// corner only leans away from those edges.
+function edge_dir(elliptical, x, y, width, length, band,
+                  lean_front_back = true, lean_left_right = true) =
+    !elliptical
         ? let(
-            x_ok = lean_edges == "all" || lean_edges == "length",
-            y_ok = lean_edges == "all" || lean_edges == "width",
-            ex = x_ok && width / 2 - abs(x) <= band ? sign(x) : 0,
-            ey = y_ok && length / 2 - abs(y) <= band ? sign(y) : 0,
+            ex = lean_left_right && width / 2 - abs(x) <= band ? sign(x) : 0,
+            ey = lean_front_back && length / 2 - abs(y) <= band ? sign(y) : 0,
             n = norm([ex, ey])
           ) n == 0 ? [0, 0] : [ex, ey] / n
         : let(
