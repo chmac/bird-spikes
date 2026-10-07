@@ -2,6 +2,14 @@
 // Viewed from above, X is to the right (width) and Y is away from you (length).
 // The front and back edges run along the width; the left and right edges run
 // along the length.
+//
+// Notes:
+// - Keep edge_band below the edge margin + bottom_diameter / 2 + pitch, or a
+//   second row of spikes leans too.
+// - An elliptical plate always leans all the way round; the lean_*_edges
+//   options only apply to rectangles.
+// - Keep comments on parameters to a single line: the single-file build
+//   (make dist) drops comments that continue over several lines.
 use <lib/spike.scad>
 use <lib/layout.scad>
 
@@ -24,12 +32,9 @@ edge_margin_left_right = 1; // mm, gap from the left and right edges to the oute
 
 /* [Edge lean] */
 lean_angle            = 30;    // degrees from vertical, 0 = no lean
-edge_band             = 30;    // mm: spikes whose centre is this close to the edge lean outwards
-                               // (keep it below edge margin + bottom_diameter/2 + pitch,
-                               // or a second row leans too)
-lean_front_back_edges = true;  // rectangle only: lean the spikes along the front and back edges
-lean_left_right_edges = true;  // rectangle only: lean the spikes along the left and right edges
-                               // (an elliptical plate always leans all the way round)
+edge_band             = 30;    // mm, spikes with their centre this close to the edge lean outwards
+lean_front_back_edges = true;  // rectangle only, lean spikes along the front and back edges
+lean_left_right_edges = true;  // rectangle only, lean spikes along the left and right edges
 
 /* [Hidden] */
 $fn = 48;

@@ -9,8 +9,18 @@ OpenSCAD models for bird spikes.
   - `spike.scad` – one spike (bottom/top diameter, height)
   - `layout.scad` – where spikes go on a given plate shape
 - `stl/` – exported meshes for slicing (`make`)
+- `dist/` – single-file bundles for uploading to sites that take one `.scad` (`make dist`)
+
+## Dependencies
+
+- [OpenSCAD](https://openscad.org) – `brew install --cask openscad`
+- [uv](https://docs.astral.sh/uv/) – `brew install uv`. Used to run
+  [openscad-packer](https://pypi.org/project/openscad-packer/) via `uvx`, which
+  bundles the `lib/` files into one `.scad` for publishing. Nothing else to install.
 
 ## Usage
 
-Install OpenSCAD (`brew install --cask openscad`), open `bird_spikes.scad`,
-F5 to preview, F6 to render, then export STL. Or run `make` to export from the CLI.
+Open `bird_spikes.scad` in OpenSCAD, F5 to preview, F6 to render, then export STL.
+Or run `make` to export from the CLI.
+
+To publish, run `make dist` and upload `dist/bird_spikes.scad`.
