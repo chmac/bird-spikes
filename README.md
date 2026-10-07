@@ -24,3 +24,7 @@ Open `bird_spikes.scad` in OpenSCAD, F5 to preview, F6 to render, then export ST
 Or run `make` to export from the CLI.
 
 To publish, run `make dist` and upload `dist/bird_spikes.scad`.
+
+## License
+
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) – see `LICENSE`.
