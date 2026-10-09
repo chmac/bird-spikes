@@ -14,15 +14,15 @@ use <lib/spike.scad>
 use <lib/layout.scad>
 
 /* [Plate] */
-elliptical_plate = false;  // oval (or circle, if width = length) instead of a rectangle
-plate_width      = 200;    // mm, along X
-plate_length     = 150;    // mm, along Y
+elliptical_plate = true;  // oval (or circle, if width = length) instead of a rectangle
+plate_width      = 205;    // mm, along X
+plate_length     = 205;    // mm, along Y
 plate_thickness  = 1;      // mm
 
 /* [Spikes] */
-bottom_diameter = 5;       // mm
-top_diameter    = 3;       // mm, 0 = cone
-height          = 40;      // mm
+bottom_diameter = 10;       // mm
+top_diameter    = 5;       // mm, 0 = cone
+height          = 60;      // mm
 pitch           = 30;      // mm, minimum centre-to-centre spacing (>= bottom_diameter)
 stagger         = false;   // offset alternate rows
 
@@ -31,7 +31,7 @@ edge_margin_front_back = 1; // mm, gap from the front and back edges to the oute
 edge_margin_left_right = 1; // mm, gap from the left and right edges to the outermost spike bases
 
 /* [Edge lean] */
-lean_angle            = 30;    // degrees from vertical, 0 = no lean
+lean_angle            = 25;    // degrees from vertical, 0 = no lean
 edge_band             = 30;    // mm, spikes with their centre this close to the edge lean outwards
 lean_front_back_edges = true;  // rectangle only, lean spikes along the front and back edges
 lean_left_right_edges = true;  // rectangle only, lean spikes along the left and right edges
